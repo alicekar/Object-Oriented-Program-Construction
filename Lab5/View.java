@@ -1,36 +1,39 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 
 /**
  *
  * @author alicekarnsund
- * heeeej!!!
+ * BRANCH L5
+ * The class View2 creats a frame and adds all its contents, it also contains
+ * the most basic functions for the browser
  */	
 public class View extends JFrame{
-	private JLabel myLabel = new JLabel("Test");
-	private JPanel myPanel = new JPanel();
+	//private JLabel myLabel = new JLabel("Test");
+	private JPanel topPanel = new JPanel();
 	private JTextField myTextField = new JTextField("Enter Address");
-	private JButton myExit = new JButton("Exit");
-	private JEditorPane myPane = new JEditorPane();
-	private JScrollPane myScroll = new JScrollPane();
-
-
+	private JButton myClose = new JButton("Close");
+	public JEditorPane myPane = new JEditorPane();
 	//private Container container = getContentPane();   // Needed to add thing to the frame
+	//Controller myController = new Controller();
 
-
-	public View(){
+	/** Constructor */ 
+	public View(Controller controllerIn){
 		super("The Web Browser");
 
-		/* Set up the first panel and its components*/
-		myPanel.add(myTextField);
-		myPanel.add(myExit);
-		myPane.add(myLabel);
-		myPane.setBorder(BorderFactory.createLineBorder(Color.red));  // To test the position of panel2
-		//myPane.add(myScroll);
+		controllerIn.actionClose(myClose, this);
+
+		/* Set up the top panel and the editor with the components*/
+	    //topPanel.add(myLabel);
+		topPanel.add(myTextField);
+		topPanel.add(myClose);
+		myPane.setContentType("text/html");
+		myPane.setEditable(false);
+		//myPane.setBorder(BorderFactory.createLineBorder(Color.red));  // To test the position of panel2
 
 		/* Set up the frame and its components*/
-		add(myPanel, BorderLayout.NORTH);
-		//add(myPane, BorderLayout.CENTER);
+		add(topPanel, BorderLayout.NORTH);
 		add(new JScrollPane(myPane), BorderLayout.CENTER);
 
 		/* Set up the Frame */
@@ -40,11 +43,5 @@ public class View extends JFrame{
 		setVisible(true);
 	}
 
-
-	/** Main method, calls the constructor and runs the program
-     * @param args */
-	public static void main(String[] args) {
-		new View();
-	}
 
 }
