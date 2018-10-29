@@ -1,10 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 
+
 /**
  *
  * @author alicekarnsund
- *
+ * heej
  */	
 public class View extends JFrame{
 	private JLabel myLabel = new JLabel("Test");
