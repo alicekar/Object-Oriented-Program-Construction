@@ -4,7 +4,7 @@ import java.awt.*;
 /**
  *
  * @author alicekarnsund
- *
+ * heeeej!!!
  */	
 public class View extends JFrame{
 	private JLabel myLabel = new JLabel("Test");
