@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.*;
 import javax.swing.event.*;
 import java.util.*;
+import java.net.HttpURLConnection;
 
 /**
  *
@@ -62,7 +63,8 @@ public class Controller implements HyperlinkListener, ActionListener, KeyListene
      
     /** The function keyReleased converts the string in the textfield to an URL
      * when "enter" is pressed and then the URL is being entered with the goTo 
-     * method in View2, else if the URL is invalid, an error message is shown.
+     * method in View2 if the response code == 200. If the URL is invalid, 
+     * an error message is shown.
      * @param e 
      * @Override
      */
@@ -71,10 +73,16 @@ public class Controller implements HyperlinkListener, ActionListener, KeyListene
     		String address = myView.getAddress();
     		try{
     			URL url = new URL(address);
+    			int code = myModel.checkResponseCode(url);
+    			// if code == 200 below happens 
     			myModel.addAddress(url);
     			myView.setPage(url);
     			updateButtons();
+    			
     		}catch(MalformedURLException ex){
+    			myView.errorMessage("The URL you have entered is invalid! Please "
+                    + "try again");
+    		}catch(IOException ie){  // If code /= 200 this happens
     			myView.errorMessage("The URL you have entered is invalid! Please "
                     + "try again");
     		}		
