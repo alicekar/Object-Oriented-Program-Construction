@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
-
+import java.util.*;
 
 /**
  *
@@ -21,15 +21,19 @@ public class View extends JFrame{
 	private JMenuBar myMenu = new JMenuBar();
 	private JMenu menuText = new JMenu(" HISTORY ");
 	private JMenuItem menuItem = new JMenuItem("Item");
+	private Controller controller;
 	//private Container container = getContentPane();   // Needed to add thing to the frame
 
 	/** Constructor */ 
 	public View(Controller controllerIn){
 		super("The Web Browser");
+		controller = controllerIn;
 
 		/* Set up the top panel and the editor with the components*/
 		backButton.setEnabled(false);
+		backButton.addActionListener(controllerIn);
 		forwardButton.setEnabled(false);
+		forwardButton.addActionListener(controllerIn);
 		myMenu.add(menuText);
 		menuText.add(menuItem);
 		menuText.setEnabled(false);
@@ -65,7 +69,7 @@ public class View extends JFrame{
 	}
 
 	/** Shows the current URL in the editorPane
-	 *
+	 * @param urlIn
 	 */
 	public void setPage(URL urlIn){
 		try{
@@ -98,7 +102,20 @@ public class View extends JFrame{
     	menuText.setEnabled(booleanIn);
     }
 
+    public void updateMenu(ArrayList<URL> listIn){
+    	JMenuItem item;
+    	menuText.removeAll();
+    	for(URL url: listIn){
+    		item = new JMenuItem(url.toString());
+    		item.addActionListener(controller);
+    		menuText.add(item);
+    	}
+    }
 
+    /** The function errorMessage shows a new window with an error message if 
+     * there is something wrong with the current link or if there is no internet
+     * @param messageIn
+     */
 	public void errorMessage(String messageIn){
 		JOptionPane.showMessageDialog(this, messageIn, "Warning", 
 			JOptionPane.ERROR_MESSAGE);
