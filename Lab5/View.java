@@ -7,9 +7,9 @@ import java.util.*;
 /**
  *
  * @author alicekarnsund
- * BRANCH L5
+ * 
  * The class View2 creats a frame and adds all its contents, it also contains
- * the most basic functions for the browser
+ * graphical functions 
  */	
 public class View extends JFrame{
 	private JPanel topPanel = new JPanel();
@@ -22,7 +22,6 @@ public class View extends JFrame{
 	private JMenu menuText = new JMenu(" HISTORY ");
 	private JMenuItem menuItem = new JMenuItem("Item");
 	private Controller controller;
-	//private Container container = getContentPane();   // Needed to add thing to the frame
 
 	/** Constructor */ 
 	public View(Controller controllerIn){

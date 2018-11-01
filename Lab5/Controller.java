@@ -11,6 +11,9 @@ import java.net.HttpURLConnection;
  *
  * @author alicekarnsund
  * 
+ * The controller class implements 3 types of listeners that are necessary for
+ * interactions with the program. It contains the functions that translates the
+ * users interactions with myView into actions 
  */	
 public class Controller implements HyperlinkListener, ActionListener, KeyListener{
 	View myView = new View(this);
@@ -74,15 +77,19 @@ public class Controller implements HyperlinkListener, ActionListener, KeyListene
     		try{
     			URL url = new URL(address);
     			int code = myModel.checkResponseCode(url);
-    			// if code == 200 below happens 
-    			myModel.addAddress(url);
-    			myView.setPage(url);
-    			updateButtons();
-    			
+    			if(code == 200){
+    				myModel.addAddress(url);
+    				myView.setPage(url);
+    				updateButtons();
+    			}
+    			else{
+    				myView.errorMessage("The URL you have entered is invalid! Please "
+                    + "try again");
+    			}
     		}catch(MalformedURLException ex){
     			myView.errorMessage("The URL you have entered is invalid! Please "
                     + "try again");
-    		}catch(IOException ie){  // If code /= 200 this happens
+    		}catch(IOException ie){  
     			myView.errorMessage("The URL you have entered is invalid! Please "
                     + "try again");
     		}		

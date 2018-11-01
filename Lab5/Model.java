@@ -7,6 +7,9 @@ import java.io.IOException;
 /**
  *
  * @author alicekarnsund
+ *
+ * The Model class contains the hidden functions, such as keeping tranck of number
+ * of websites visited and at which website in the addressList we are at the moment
  */
 public class Model{
 	ArrayList<URL> addressList;
