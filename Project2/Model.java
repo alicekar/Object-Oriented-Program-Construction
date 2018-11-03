@@ -29,10 +29,16 @@ public class Model{
 		return theXml;
 	}
 
-    private String modifyText(String aText){
+    public String modifyText(String aText){
 		String modText = aText.replace(">", "&gt");
-		modText = modText.replace(">", "&lt");
+		modText = modText.replace("<", "&lt");
 		return modText;
+	}
+
+	public String reverseModifyText(String textIn){
+		String revText = textIn.replace("&gt", ">");
+		revText = revText.replace("&lt", "<");
+		return revText;
 	}
 
 
@@ -40,28 +46,34 @@ public class Model{
 		List<String> allParts = Arrays.asList(stringIn);
 		int nParts = allParts.size();
 		List<String> cleanString = new ArrayList<String>();
-		System.out.println(allParts);
 		for(String s:allParts){
 			if(s.equals("")){
 			}else{
-				System.out.println(s);
 				cleanString.add(s);
 			}
 		}
 		return cleanString;
 	}
-
-	public List<String> xmlToString(String xmlIn){
+	//OBS ADD SO YOU CAN SEND XML
+	public List<Object> xmlToString(String xmlIn){
 		// <message sender="A"><text color="#999999">Hej, jag vill vet hur detta ska redigeras<\text><\message>
 		//<message sender="B"><text color="#999999">kul, jag vill ha italic<\text><\message>
 		//<message sender="B"><text color="#999999">halå<\text><\message>
 		//<message sender="B"><text color="#999999"><fetstil><kursiv>bold?<\kursiv><\fetstil><\text><\message>
 		//<message sender="B"><text color="#999999"><fetstil>bara bold<\fetstil><\text><\message>
+		//<message sender="A"><text color="#999999">hej<glad&gthaha&gt<&gt<\text><\message>
+		//<message sender="A"><text color="#999999">hoho&gt&lthaha&lt&lthehe&gt&gt<\text><\message>
+
+		System.out.println(xmlIn);
+
+		String textIn = new String();
 		String text = new String();
 		String color = new String();
 		String type1 = new String();
 		String type2 = new String();
-		List<String> info = new ArrayList<String>();
+		Boolean bold = false;
+		Boolean italic = false;
+		List<Object> info = new ArrayList<Object>();
 		try{
 			String[] splitParts = xmlIn.split(">|<");
 		
@@ -79,35 +91,32 @@ public class Model{
 			String txt1 = parts.get(1);
 			String txt2 = parts.get(nParts-1);
 			
-			System.out.println(txt1.substring(12, txt1.length()));
-			
+			//System.out.println(txt1.substring(12, txt1.length()));
+			//(String text, String color, boolean bold, boolean italic)
 			if(mess1.substring(0,7).equals(mess2.substring(mess2.length()-7,mess2.length()))){
-				System.out.println("JAA");
 				if(txt1.substring(0,4).equals(txt2.substring(txt2.length()-4,txt2.length()))){
-					System.out.println("mm");
 					if(nParts == 4){
-						text = parts.get(2);
-						color = txt1.substring(12, txt1.length());
-						info.add(text);
-						info.add(color);
+						textIn = parts.get(2);
+						text = reverseModifyText(textIn);
+						color = txt1.substring(11, txt1.length());
 					}else if(nParts == 6){
-						text = parts.get(3);
-					    color = txt1.substring(12, txt1.length());
+						textIn = parts.get(3);
+						text = reverseModifyText(textIn);
+					    color = txt1.substring(11, txt1.length());
 						type1 = parts.get(2);
-						info.add(text);
-						info.add(color);
-						info.add(type1);
+						if(type1.equals("fetstil")){
+							bold = true;
+						}else{
+							italic = true;
+						}
 					}else if(nParts == 8){
-						text = parts.get(4);
-						color = txt1.substring(12, txt1.length());
+						textIn = parts.get(4);
+						text = reverseModifyText(textIn);
+						color = txt1.substring(11, txt1.length());
 						type1 = parts.get(2);
 						type2 = parts.get(3);
-						info.add(text);
-						info.add(color);
-						info.add(type1);
-						info.add(type2);
-						System.out.println(color);
-				
+						bold = true;
+						italic = true;
 					}else{
 						System.out.println("There is something wrong with the XML or an empty"
 							+"string was sent");
@@ -118,12 +127,18 @@ public class Model{
 		}catch(Exception e){
 			System.out.println("There is something wrong with the XML");
 		}
-
+		info.add(text);
+		info.add(color);
+		info.add(bold);
+		info.add(italic);
 		System.out.println(info);
 		
 		return info;
 	}
-
+	//ArrayList<Boolean>
+	//public void getTypeAndColor(List<String> infoIn){
+	//	System.out.println(infoIn);
+	//} 
 
 
 }

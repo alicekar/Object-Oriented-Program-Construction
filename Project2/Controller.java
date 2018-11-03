@@ -18,8 +18,10 @@ public class Controller implements ActionListener, Runnable {
 	public Controller(){
 		theView = new View(this);
 		theModel = new Model();
-		//xmlToString("<message sender="+"B"+"><text color="+"#999999"+"><fetstil>bara bold<\\fetstil><\\text><\\message>");
-		//theModel.xmlToString("<message sender="+"B"+"><text color="+"#999999"+"><fetstil><kursiv>bold?<\\kursiv><\\fetstil><\\text><\\message>");
+		//theModel.xmlToString("<message sender="+"B"+"><text color="+"#999999"+"><fetstil>bara bold<\\fetstil><\\text><\\message>");
+		//theModel.xmlToString("<message sender="+"A"+"><text color="+"#999999"+">hoho&gt&lthaha&lt&lthehe&gt&gt<\\text><\\message>");
+		//List<Object> info =theModel.xmlToString("<message sender="+"B"+"><text color="+"#999999"+"><fetstil><kursiv>bold?<\\kursiv><\\fetstil><\\text><\\message>");
+		//theModel.getTypeAndColor(info);
 	}
 
 
@@ -82,9 +84,18 @@ public class Controller implements ActionListener, Runnable {
                 String messageOut = name + ": " + text;
                 theView.showMessage(messageOut, color, bold, italic);
 				String xml = theModel.stringToXml(text, name, color, bold, italic);
-				List<String> info = theModel.xmlToString(xml);
-				String textMessage = theModel.xmlToString(xml).get(0);
-				streamOut.println(name + ": "+textMessage);
+				List<Object> info = theModel.xmlToString(xml);
+				Object textObject = info.get(0);
+				Object colorObject = info.get(1);
+				Object boldObject = info.get(2);
+				Object italicObject = info.get(3);
+				String senderText = textObject.toString();
+				String senderColor = colorObject.toString();
+				Boolean senderBold = (Boolean) boldObject;
+				Boolean senderItalic = (Boolean) italicObject;
+				System.out.println(senderColor);
+				//theView.showMessage(senderText, senderColor, senderBold, senderItalic);
+				streamOut.println(name + ": "+senderText);
             }catch(Exception e){
                 System.out.println("Error when sending a message");
             }
@@ -103,7 +114,6 @@ public class Controller implements ActionListener, Runnable {
             }
         }
     } 	
-
 
 
     public void run(){
