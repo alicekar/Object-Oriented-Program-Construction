@@ -1,144 +1,175 @@
-import java.awt.Color;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-import javax.swing.*;
-import java.util.*;
+//package projectfinal;
 
+/**
+ * @author alicekarnsund
+ * @author elinsamuelsson
+ * 
+ * The model class, which handles all encoding and decoding of chat messages 
+ */
 public class Model{
 
-	public Model(){
+    /**
+     * The constructor
+     */
+    public Model(){
+    }
 
-	}
+    /**
+     * Returns the color as a string if it is in the right format, otherwise 
+     * returns "#000000", which corresponds to the color black. 
+     *
+     * @param  colorIn the input color as a string
+     * @return color a valid color as a string
+     */
+    public String validateColor(String colorIn){
 
+        String color = colorIn;
 
-	public String stringToXml(String textIn, String nameIn, String colorIn, boolean boldIn, boolean italicIn){
-		String theXml = "<message sender=\"" + nameIn + "\"><text color=\"" + colorIn + "\">";
-		if (boldIn){
-			if (italicIn && boldIn){
-				theXml += "<fetstil><kursiv>" + modifyText(textIn) + "<\\kursiv><\\fetstil>";
-			}else if(boldIn){
-				theXml += "<fetstil>" + modifyText(textIn) + "<\\fetstil>";	
-			} else {
-				theXml += "<kursiv>" + modifyText(textIn) + "<\\kursiv>";
-			}
-		}else{
-			theXml += modifyText(textIn);
-		}
-		theXml += "<\\text><\\message>";
-		return theXml;
-	}
+        // Check if valid color 
+        if (color.length()!=7){
+            color = "#000000";
+        }else if(!color.substring(0, 1).equals("#")){
+            color = "#000000";
+        }else{
+            for (int i=1; i<=6; i++){
+                if(!(color.substring(i, i+1).equals("0") || 
+                    color.substring(i, i+1).equals("1") || 
+                    color.substring(i, i+1).equals("2") || 
+                    color.substring(i, i+1).equals("3") || 
+                    color.substring(i, i+1).equals("4") || 
+                    color.substring(i, i+1).equals("5") || 
+                    color.substring(i, i+1).equals("6") || 
+                    color.substring(i, i+1).equals("7") || 
+                    color.substring(i, i+1).equals("8") || 
+                    color.substring(i, i+1).equals("9") || 
+                    color.substring(i, i+1).equals("A") || 
+                    color.substring(i, i+1).equals("B") || 
+                    color.substring(i, i+1).equals("C") || 
+                    color.substring(i, i+1).equals("D") || 
+                    color.substring(i, i+1).equals("E") || 
+                    color.substring(i, i+1).equals("F"))){
 
-    public String modifyText(String aText){
-		String modText = aText.replace(">", "&gt");
-		modText = modText.replace("<", "&lt");
-		return modText;
-	}
+                    color = "#000000";
+                }
+            }
+        }
 
-	public String reverseModifyText(String textIn){
-		String revText = textIn.replace("&gt", ">");
-		revText = revText.replace("&lt", "<");
-		return revText;
-	}
+        return color;
+    }
 
+    /**
+     * Modification of a message, so that we will not mess up the decoding 
+     * from XML to message
+     *
+     * @param  textIn the input string
+     * @return modText the modified string
+     */
+    public String modifyText(String textIn){
+        String modText = textIn.replace(">", "&gt");
+        modText = modText.replace("<", "&lt");
+        return modText;
+    }
 
-	public List<String> getCleanString(String[] stringIn){
-		List<String> allParts = Arrays.asList(stringIn);
-		int nParts = allParts.size();
-		List<String> cleanString = new ArrayList<String>();
-		for(String s:allParts){
-			if(s.equals("")){
-			}else{
-				cleanString.add(s);
-			}
-		}
-		return cleanString;
-	}
-	//OBS ADD SO YOU CAN SEND XML
-	public List<Object> xmlToString(String xmlIn){
-		// <message sender="A"><text color="#999999">Hej, jag vill vet hur detta ska redigeras<\text><\message>
-		//<message sender="B"><text color="#999999">kul, jag vill ha italic<\text><\message>
-		//<message sender="B"><text color="#999999">halå<\text><\message>
-		//<message sender="B"><text color="#999999"><fetstil><kursiv>bold?<\kursiv><\fetstil><\text><\message>
-		//<message sender="B"><text color="#999999"><fetstil>bara bold<\fetstil><\text><\message>
-		//<message sender="A"><text color="#999999">hej<glad&gthaha&gt<&gt<\text><\message>
-		//<message sender="A"><text color="#999999">hoho&gt&lthaha&lt&lthehe&gt&gt<\text><\message>
+    /**
+     * Reverse modification of a message, to be able to display "less" and 
+     * "greater than" in the 
+     * chat
+     *
+     * @param  textIn the previously modified input string
+     * @return modText the reversely modified (i.e. original) string
+     */
+    public String reverseModifyText(String textIn){
+        String revText = textIn.replace("&gt", ">");
+        revText = revText.replace("&lt", "<");
+        return revText;
+    }
 
-		System.out.println(xmlIn);
+    /**
+     * Turns the message information (text, name, color, bold, italics) into an 
+     * XML encoded string
+     *
+     * @param  textIn the message as a string
+     * @param  nameIn the name as a string
+     * @param  colorIn the color as a string
+     * @param  boldIn a boolean indicating if the message is bold or not
+     * @param  italicsIn a boolean indicating if the message is in italics or not
+     * @return theXml a summarizing XML encoded string
+     */
+    public String stringToXml(String textIn, String nameIn, String colorIn, 
+            boolean boldIn, boolean italicsIn){
+        String theXml = "<message sender=\"" + nameIn + "\"><text color=\"" + 
+                colorIn + "\">";
+        if (boldIn && italicsIn){
+                theXml += "<fetstil><kursiv>" + modifyText(textIn) + 
+                        "<\\kursiv><\\fetstil>";
+        } else if (italicsIn){
+                theXml += "<kursiv>" + modifyText(textIn) + "<\\kursiv>";
+        } else if (boldIn){
+                theXml += "<fetstil>" + modifyText(textIn) + "<\\fetstil>";
+        }else{
+                theXml += modifyText(textIn);
+        }
+        theXml += "<\\text><\\message>";
+        return theXml;
+    }
 
-		String textIn = new String();
-		String text = new String();
-		String color = new String();
-		String type1 = new String();
-		String type2 = new String();
-		Boolean bold = false;
-		Boolean italic = false;
-		List<Object> info = new ArrayList<Object>();
-		try{
-			String[] splitParts = xmlIn.split(">|<");
-		
-			List<String> parts = getCleanString(splitParts);
-			int nParts = parts.size()-1;
-			//String part = Arrays.toString(parts);
-			
-			System.out.println(parts);
-			System.out.println(nParts);
-			//String[] clean = Arrays.stream(parts).filter(x -> !StringUtils.isBlank(x)).toArray(String[]::new);
-			
-			
-			String mess1 = parts.get(0);
-			String mess2 = parts.get(nParts);
-			String txt1 = parts.get(1);
-			String txt2 = parts.get(nParts-1);
-			
-			//System.out.println(txt1.substring(12, txt1.length()));
-			//(String text, String color, boolean bold, boolean italic)
-			if(mess1.substring(0,7).equals(mess2.substring(mess2.length()-7,mess2.length()))){
-				if(txt1.substring(0,4).equals(txt2.substring(txt2.length()-4,txt2.length()))){
-					if(nParts == 4){
-						textIn = parts.get(2);
-						text = reverseModifyText(textIn);
-						color = txt1.substring(11, txt1.length());
-					}else if(nParts == 6){
-						textIn = parts.get(3);
-						text = reverseModifyText(textIn);
-					    color = txt1.substring(11, txt1.length());
-						type1 = parts.get(2);
-						if(type1.equals("fetstil")){
-							bold = true;
-						}else{
-							italic = true;
-						}
-					}else if(nParts == 8){
-						textIn = parts.get(4);
-						text = reverseModifyText(textIn);
-						color = txt1.substring(11, txt1.length());
-						type1 = parts.get(2);
-						type2 = parts.get(3);
-						bold = true;
-						italic = true;
-					}else{
-						System.out.println("There is something wrong with the XML or an empty"
-							+"string was sent");
-					}
+    /**
+     * Extracts relevant information from an XML encoded string and returns an 
+     * Info object, with the fields text, color, bold, italics, XMLok
+     *
+     * @param  xmlIn a summarizing XML coded string
+     * @return info an Info object containing all information about how to 
+     * display this message
+     */
+    public Info xmlToString(String xmlIn){
+        Info info = new Info();
+        try{
+            String[] parts = xmlIn.split(">|<");
+            int n = parts.length;
 
-				}
-			}
-		}catch(Exception e){
-			System.out.println("There is something wrong with the XML");
-		}
-		info.add(text);
-		info.add(color);
-		info.add(bold);
-		info.add(italic);
-		System.out.println(info);
-		
-		return info;
-	}
-	//ArrayList<Boolean>
-	//public void getTypeAndColor(List<String> infoIn){
-	//	System.out.println(infoIn);
-	//} 
+            String[] part1 = parts[1].split(" |=");
+            String[] part3 = parts[3].split(" |=");
+            if(part1[0].equals("message") && parts[n-1].equals("\\message")){
+                if (part1.length > 1){
+                    info.setText(part1[2].replace("\"", ""));
+                }
+                info.addText(": ");
+                if(part3[0].equals("text") && parts[n-3].equals("\\text")){
+                    if (part3.length > 1){
+                        String colorStr = part3[2].replace("\"", "");
+                        info.setColor(validateColor(colorStr));
+                    }
+                    if (n == 8){
+                        info.addText(reverseModifyText(parts[4]));
+                        info.setOK(true);
+                    } else if (n == 12){
+                        if(parts[5].equals("kursiv") && parts[n-5].equals
+                            ("\\kursiv")){
+                                info.addText(reverseModifyText(parts[6]));
+                                info.setItalics(true);
+                                info.setOK(true);
+                        }else if(parts[5].equals("fetstil") && parts[n-5].equals
+                            ("\\fetstil")){
+                                info.addText(reverseModifyText(parts[6]));
+                                info.setBold(true);
+                                info.setOK(true);
+                        }
+                    } else if (n == 16){
+                        if(parts[5].equals("fetstil") && parts[n-5].equals
+                            ("\\fetstil") && parts[7].equals("kursiv") && 
+                            parts[n-7].equals("\\kursiv")){
+                                info.addText(reverseModifyText(parts[8]));
+                                info.setItalics(true);
+                                info.setBold(true);
+                                info.setOK(true);
+                        }
+                    }
+                }
+            }
+        }catch(Exception e){
+                System.out.println("Something went wrong when decoding the XML");
+        }
 
-
+        return info;
+    }
 }
